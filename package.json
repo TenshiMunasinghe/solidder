@@ -17,6 +17,9 @@
     "vite-plugin-solid": "^2.2.6"
   },
   "dependencies": {
+    "@types/mysql": "^2.15.21",
+    "@vercel/node": "^2.2.0",
+    "ky": "^0.31.0",
     "mysql": "^2.18.1",
     "solid-js": "^1.4.2",
     "uuid": "^8.3.2"
