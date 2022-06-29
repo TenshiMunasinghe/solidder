@@ -5,7 +5,7 @@ const App: Component = () => {
   const [data] = createResource(
     () => '/api/users',
     async url => {
-      return await ky.get(url).json()
+      return ky.get(url).json()
     }
   )
   createEffect(() => {
