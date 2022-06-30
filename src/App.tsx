@@ -1,13 +1,8 @@
-import ky from 'ky'
-import { Component, createEffect, createResource } from 'solid-js'
+import { Component, createEffect } from 'solid-js'
+import { createTrpcQuery } from './lib/trpc'
 
 const App: Component = () => {
-  const [data] = createResource(
-    () => '/api/users',
-    async url => {
-      return ky.get(url).json()
-    }
-  )
+  const [data] = createTrpcQuery('users')
   createEffect(() => {
     console.dir(data())
   })

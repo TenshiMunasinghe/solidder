@@ -11,17 +11,23 @@
   "devDependencies": {
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.14",
+    "prisma": "^4.0.0",
     "tailwindcss": "^3.0.24",
     "typescript": "^4.6.4",
     "vite": "^2.9.9",
     "vite-plugin-solid": "^2.2.6"
   },
   "dependencies": {
-    "@types/mysql": "^2.15.21",
+    "@prisma/client": "^4.0.0",
+    "@trpc/client": "^9.25.3",
+    "@trpc/next": "^9.25.3",
+    "@trpc/server": "^9.25.3",
     "@vercel/node": "^2.2.0",
+    "frameworks": "link:@types/@vercel/frameworks",
     "ky": "^0.31.0",
-    "mysql": "^2.18.1",
+    "routing-utils": "link:@types/@vercel/routing-utils",
     "solid-js": "^1.4.2",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "zod": "^3.17.3"
   }
 }

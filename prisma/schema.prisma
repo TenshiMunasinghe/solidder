@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Liquid {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  content   String?
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  parent    Solid    @relation(fields: [parentId], references: [id])
+  parentId  Int
+
+  @@index([authorId, parentId])
+
+  @@map("liquid")
+}
+
+model Solid {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  content   String?
+  likes     Int      @default(0)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  liquids Liquid[]
+
+  @@index(authorId)
+
+  @@map("solid")
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  name    String?  @unique
+  solids  Solid[]
+  liquids Liquid[]
+  bio     String?
+
+  @@map("user")
+}
