@@ -15,7 +15,7 @@ datasource db {
 model Liquid {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  content   String?
+  content   String
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
   parent    Solid    @relation(fields: [parentId], references: [id])
@@ -29,7 +29,7 @@ model Liquid {
 model Solid {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  content   String?
+  content   String
   likes     Int      @default(0)
   author    User     @relation(fields: [authorId], references: [id])
   authorId  Int
@@ -42,8 +42,8 @@ model Solid {
 
 model User {
   id      Int      @id @default(autoincrement())
-  name    String?  @unique
-  email   String?  @unique
+  name    String  @unique
+  email   String  @unique
   solids  Solid[]
   liquids Liquid[]
   bio     String?
