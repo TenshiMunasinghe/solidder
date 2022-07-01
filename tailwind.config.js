@@ -17,7 +17,19 @@ module.exports = {
       black: 900,
       ultra: 1000,
     },
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#2c4f7c',
+
+        secondary: '#335d92',
+
+        light: '#446b9e',
+
+        accent: '#66e6ac',
+
+        'second-accent': '#0CDC73',
+      },
+    },
   },
   plugins: [],
 }

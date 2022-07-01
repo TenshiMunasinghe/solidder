@@ -26,6 +26,7 @@
     "frameworks": "link:@types/@vercel/frameworks",
     "ky": "^0.31.0",
     "routing-utils": "link:@types/@vercel/routing-utils",
+    "solid-app-router": "^0.4.1",
     "solid-js": "^1.4.2",
     "uuid": "^8.3.2",
     "zod": "^3.17.3"

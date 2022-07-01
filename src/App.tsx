@@ -1,12 +1,15 @@
-import { Component, createEffect } from 'solid-js'
-import { createTrpcQuery } from './lib/trpc'
+import { Route, Routes } from 'solid-app-router'
+import { Component } from 'solid-js'
+import Home from './pages/home'
 
 const App: Component = () => {
-  const [data] = createTrpcQuery('users')
-  createEffect(() => {
-    console.dir(data())
-  })
-  return <div class=''>Hello Solidder</div>
+  return (
+    <div class='max-w-4xl mx-auto'>
+      <Routes>
+        <Route path='/' component={Home} />
+      </Routes>
+    </div>
+  )
 }
 
 export default App

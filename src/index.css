@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply min-h-screen bg-neutral-800 text-neutral-50;
+}
