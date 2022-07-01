@@ -43,6 +43,7 @@ model Solid {
 model User {
   id      Int      @id @default(autoincrement())
   name    String?  @unique
+  email   String?  @unique
   solids  Solid[]
   liquids Liquid[]
   bio     String?
