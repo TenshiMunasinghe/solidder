@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "postinstall": "npx prisma generate"
   },
   "license": "MIT",
   "devDependencies": {
@@ -23,9 +24,7 @@
     "@trpc/next": "^9.25.3",
     "@trpc/server": "^9.25.3",
     "@vercel/node": "^2.2.0",
-    "frameworks": "link:@types/@vercel/frameworks",
     "ky": "^0.31.0",
-    "routing-utils": "link:@types/@vercel/routing-utils",
     "solid-app-router": "^0.4.1",
     "solid-js": "^1.4.2",
     "uuid": "^8.3.2",
