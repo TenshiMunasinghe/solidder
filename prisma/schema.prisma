@@ -10,7 +10,7 @@ datasource db {
 }
 
 model Liquid {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(uuid())
   createdAt DateTime @default(now())
   content   String
   authorId  Int
@@ -21,7 +21,7 @@ model Liquid {
 }
 
 model Solid {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(uuid())
   createdAt DateTime @default(now())
   content   String
   authorId  Int
@@ -32,7 +32,7 @@ model Solid {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
+  id    String     @id @default(uuid())
   name  String  @unique
   bio   String?
   email String  @unique
