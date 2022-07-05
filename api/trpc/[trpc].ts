@@ -58,7 +58,7 @@ const appRouter = trpc
         data: {
           email: input.email,
           name: input.username,
-          password: input.password,
+          password: bcrypt.hashSync(input.password),
         },
       })
     },
