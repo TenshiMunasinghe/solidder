@@ -1,5 +1,5 @@
 import { Route, Routes } from 'solid-app-router'
-import { Component, createContext, createEffect } from 'solid-js'
+import { Component, createContext } from 'solid-js'
 import { createStore, SetStoreFunction } from 'solid-js/store'
 import { inferQueryResponse } from './lib/trpc'
 import Home from './pages/home'
@@ -21,9 +21,6 @@ export const Context = createContext<{
 const App: Component = () => {
   const [user, setUser] = createStore<NonNullable<UserStore>>({})
 
-  createEffect(() => {
-    console.dir(user)
-  })
   return (
     <Context.Provider value={{ user, setUser }}>
       <div class='max-w-4xl mx-auto'>
