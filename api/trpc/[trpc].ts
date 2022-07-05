@@ -50,14 +50,14 @@ const appRouter = trpc
   .mutation('register', {
     input: z.object({
       email: z.string(),
-      name: z.string(),
+      username: z.string(),
       password: z.string(),
     }),
     async resolve({ input }) {
       return prisma.user.create({
         data: {
           email: input.email,
-          name: input.name,
+          name: input.username,
           password: input.password,
         },
       })
