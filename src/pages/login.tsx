@@ -1,8 +1,7 @@
-import { Component } from 'solid-js'
 import { trpcClient } from '../lib/trpc'
 import useUser from '../stores/useUser'
 
-const Login: Component = () => {
+const Login = () => {
   let ref: HTMLFormElement | undefined
 
   const { setUser } = useUser()
