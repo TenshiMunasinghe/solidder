@@ -1,9 +1,10 @@
 import { Route, Routes } from 'solid-app-router'
-import { Component, createContext } from 'solid-js'
+import { Component, createContext, lazy } from 'solid-js'
 import { createStore, SetStoreFunction } from 'solid-js/store'
 import { inferQueryResponse } from './lib/trpc'
-import Home from './pages/home'
-import Login from './pages/login'
+
+const Home = lazy(() => import('./pages/home'))
+const Login = lazy(() => import('./pages/login'))
 
 type User = inferQueryResponse<'login'>
 type UserStore = NonNullable<User> | {}
