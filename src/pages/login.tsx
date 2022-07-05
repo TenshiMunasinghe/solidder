@@ -1,5 +1,6 @@
 import Button from '../components/Button'
 import Form from '../components/Form'
+import FormLabel from '../components/FormLabel'
 import Input from '../components/Input'
 import { trpcClient } from '../lib/trpc'
 import useUser from '../stores/useUser'
@@ -37,8 +38,12 @@ const Login = () => {
           onSubmit()
         }}
         ref={ref}>
-        <Input type='email' name='email' />
-        <Input type='password' name='password' />
+        <FormLabel label='Email'>
+          <Input type='email' name='email' />
+        </FormLabel>
+        <FormLabel label='Password'>
+          <Input type='password' name='password' />
+        </FormLabel>
         <Button type='submit'>Log In</Button>
       </Form>
     </div>
