@@ -5,6 +5,7 @@ import { inferQueryResponse } from './lib/trpc'
 
 const Home = lazy(() => import('./pages/home'))
 const Login = lazy(() => import('./pages/login'))
+const Register = lazy(() => import('./pages/register'))
 
 type User = inferQueryResponse<'login'>
 type UserStore = NonNullable<User> | {}
@@ -28,6 +29,7 @@ const App: Component = () => {
         <Routes>
           <Route path='/' component={Home} />
           <Route path='/login' component={Login} />
+          <Route path='/register' component={Register} />
         </Routes>
       </div>
     </Context.Provider>
