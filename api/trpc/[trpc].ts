@@ -32,10 +32,6 @@ const appRouter = trpc
 
       const { password, ...user } = data
 
-      console.log(input.password, password)
-
-      console.log(await bcrypt.compare(input.password, password))
-
       if (!(await bcrypt.compare(input.password, password))) {
         throw new trpc.TRPCError(errorOptions)
       }
