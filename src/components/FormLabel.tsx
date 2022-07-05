@@ -11,6 +11,7 @@ const FormLabel = (props: Props) => {
     'children',
     'label',
     'isInline',
+    'class',
   ])
   return (
     <label
