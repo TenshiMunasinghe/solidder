@@ -24,8 +24,8 @@ const Login = () => {
       password,
     }
 
-    trpcClient.query('login', body).then(user => {
-      setUser({ ...user })
+    trpcClient.query('login', body).then(data => {
+      setUser(data)
     })
   }
 
