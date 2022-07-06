@@ -40,8 +40,8 @@ const Login = () => {
 
     const [, body] = splitProps(fields, ['confirmPassword'])
 
-    trpcClient.mutation('register', body).then(user => {
-      setUser({ ...user })
+    trpcClient.mutation('register', body).then(data => {
+      setUser(data)
     })
   }
 

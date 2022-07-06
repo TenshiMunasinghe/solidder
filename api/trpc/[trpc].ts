@@ -4,6 +4,7 @@ import * as trpcNext from '@trpc/server/adapters/next'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import z from 'zod'
+
 const prisma = new PrismaClient()
 
 const appRouter = trpc
@@ -50,13 +51,22 @@ const appRouter = trpc
       password: z.string(),
     }),
     async resolve({ input }) {
-      return prisma.user.create({
+      const jwtSecret = process.env.JWT_SECRET
+      if (!jwtSecret) throw new Error('Internal Server Error')
+
+      const { password, ...user } = await prisma.user.create({
         data: {
           email: input.email,
           name: input.username,
           password: await bcrypt.hash(input.password, 10),
         },
       })
+
+      const token = jwt.sign(user, jwtSecret, {
+        expiresIn: '5h',
+      })
+
+      return { ...user, token }
     },
   })
 
