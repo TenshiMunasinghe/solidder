@@ -1,11 +1,9 @@
-import { batch, createResource, createSignal } from 'solid-js'
-import { trpcClient } from '../lib/trpc'
+import { batch, createSignal } from 'solid-js'
+import { createTrpcQuery, trpcClient } from '../lib/trpc'
 
 export const createAuth = () => {
   const [token, setToken] = createSignal(localStorage.getItem('token'))
-  const [user, { mutate: setUser }] = createResource(token, async () => {
-    return trpcClient.query('with-token.login')
-  })
+  const [user, { mutate: setUser }] = createTrpcQuery('with-token.login')
 
   const login = async ({
     email,
