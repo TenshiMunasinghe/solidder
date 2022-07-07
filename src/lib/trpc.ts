@@ -5,12 +5,19 @@ import type { inferHandlerInput, inferProcedureOutput } from '@trpc/server'
 
 import type { AppRouter } from '../../api/trpc/[trpc]'
 
-export const trpcClient = createTRPCClient<AppRouter>({ url: '/api/trpc' })
+export const trpcClient = createTRPCClient<AppRouter>({
+  url: '/api/trpc',
+  headers() {
+    const token = localStorage.getItem('token')
+    if (!token) return {}
+    return {
+      Authorization: token,
+    }
+  },
+})
 
 type AppQueries = AppRouter['_def']['queries']
 type AppQueryKeys = keyof AppQueries & string
-
-type Log = inferHandlerInput<AppQueries['login']>
 
 export const createTrpcQuery = <TPath extends AppQueryKeys>(
   path: TPath,

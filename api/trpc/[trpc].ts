@@ -7,8 +7,17 @@ import z from 'zod'
 
 const prisma = new PrismaClient()
 
-const appRouter = trpc
-  .router()
+const createContext = (opts?: trpcNext.CreateNextContextOptions) => {
+  return opts
+}
+
+type Context = trpc.inferAsyncReturnType<typeof createContext>
+
+const createRouter = () => {
+  return trpc.router<Context>()
+}
+
+const appRouter = createRouter()
   .query('login', {
     input: z.object({
       email: z.string(),
@@ -69,6 +78,28 @@ const appRouter = trpc
       return { ...user, token }
     },
   })
+  .merge(
+    'with-token.',
+    createRouter()
+      .middleware(async ({ ctx, next }) => {
+        const jwtSecret = process.env.JWT_SECRET
+        if (!jwtSecret) throw new Error('Internal Server Error')
+
+        const token = ctx?.req.headers.authorization
+
+        if (!token || !jwt.verify(token, jwtSecret)) {
+          throw new trpc.TRPCError({ code: 'UNAUTHORIZED' })
+        }
+        return next()
+      })
+      .query('login', {
+        resolve({ ctx }) {
+          const token = ctx?.req.headers.authorization as string
+
+          return 'hello user'
+        },
+      })
+  )
 
 // export type definition of API
 export type AppRouter = typeof appRouter
@@ -76,5 +107,5 @@ export type AppRouter = typeof appRouter
 // export API handler
 export default trpcNext.createNextApiHandler({
   router: appRouter,
-  createContext: () => null,
+  createContext,
 })
