@@ -1,14 +1,14 @@
+import { useContext } from 'solid-js'
+import { Context } from '../App'
 import Button from '../components/Button'
 import Form from '../components/Form'
 import FormLabel from '../components/FormLabel'
 import Input from '../components/Input'
-import { trpcClient } from '../lib/trpc'
-import useUser from '../stores/useUser'
 
 const Login = () => {
   let ref: HTMLFormElement | undefined
 
-  const { setUser } = useUser()
+  const { login } = useContext(Context)
 
   const onSubmit = async () => {
     if (!ref) return
@@ -19,14 +19,7 @@ const Login = () => {
 
     if (!email || !password) return
 
-    const body = {
-      email,
-      password,
-    }
-
-    trpcClient.query('login', body).then(data => {
-      setUser(data)
-    })
+    await login({ email, password })
   }
 
   return (

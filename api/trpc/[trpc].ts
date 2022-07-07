@@ -17,7 +17,7 @@ const createRouter = () => {
   return trpc.router<Context>()
 }
 
-const appRouter = createRouter()
+const defaultRouter = createRouter()
   .query('login', {
     input: z.object({
       email: z.string(),
@@ -78,28 +78,45 @@ const appRouter = createRouter()
       return { ...user, token }
     },
   })
-  .merge(
-    'with-token.',
-    createRouter()
-      .middleware(async ({ ctx, next }) => {
-        const jwtSecret = process.env.JWT_SECRET
-        if (!jwtSecret) throw new Error('Internal Server Error')
 
-        const token = ctx?.req.headers.authorization
+type DefaultRouter = typeof defaultRouter
 
-        if (!token || !jwt.verify(token, jwtSecret)) {
-          throw new trpc.TRPCError({ code: 'UNAUTHORIZED' })
-        }
-        return next()
-      })
-      .query('login', {
-        resolve({ ctx }) {
-          const token = ctx?.req.headers.authorization as string
+const authRouter = createRouter()
+  .middleware(async ({ ctx, next }) => {
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) throw new Error('Internal Server Error')
 
-          return 'hello user'
-        },
-      })
-  )
+    const token = ctx?.req.headers.authorization
+
+    if (!token || !jwt.verify(token, jwtSecret)) {
+      throw new trpc.TRPCError({ code: 'UNAUTHORIZED' })
+    }
+    return next()
+  })
+  .query('login', {
+    async resolve({ ctx }) {
+      const token = ctx?.req.headers.authorization as string
+
+      const { id, name, bio, email } = jwt.verify(
+        token,
+        process.env.JWT_SECRET || ''
+      ) as jwt.JwtPayload &
+        trpc.inferProcedureOutput<DefaultRouter['_def']['queries']['login']>
+
+      return {
+        id,
+        name,
+        bio,
+        email,
+      }
+    },
+  })
+
+type AuthRouter = typeof authRouter
+
+const appRouter = createRouter()
+  .merge('', defaultRouter)
+  .merge('with-token.', authRouter)
 
 // export type definition of API
 export type AppRouter = typeof appRouter

@@ -1,46 +1,34 @@
 import { Route, Routes } from 'solid-app-router'
-import {
-  Accessor,
-  Component,
-  createContext,
-  createEffect,
-  createSignal,
-  lazy,
-  Resource,
-  Setter,
-} from 'solid-js'
-import { createTrpcQuery, inferQueryResponse } from './lib/trpc'
+import { Component, createContext, createEffect, lazy } from 'solid-js'
+import { createAuth } from './stores/createAuth'
 
 const Home = lazy(() => import('./pages/home'))
 const Login = lazy(() => import('./pages/login'))
 const Register = lazy(() => import('./pages/register'))
 
-type User = inferQueryResponse<'with-token.login'> | undefined
-
-type Token = string | null
+type Auth = ReturnType<typeof createAuth>
 
 export const Context = createContext<{
-  user: Resource<User> | null
-  setUser: Setter<User> | (() => void)
-  token: Accessor<Token>
-  setToken: Setter<Token> | (() => void)
+  user: Auth['user'] | null
+  token: Auth['token']
+  login: Auth['login'] | (() => void)
+  register: Auth['register'] | (() => void)
 }>({
   user: null,
-  setUser: () => {
-    /* initialize setUser as empty function */
-  },
   token: () => null,
-  setToken: () => {
-    /* initialize setToken as empty function */
+  login: () => {
+    /* initialize as empty function */
+  },
+  register: () => {
+    /* initialize as empty function */
   },
 })
 
 const App: Component = () => {
-  const [token, setToken] = createSignal(localStorage.getItem('token'))
-  const [user, { mutate }] = createTrpcQuery('with-token.login')
+  const auth = createAuth()
 
   createEffect(() => {
-    const newToken = token()
+    const newToken = auth.token()
     if (!newToken) {
       localStorage.removeItem('token')
       return
@@ -49,7 +37,7 @@ const App: Component = () => {
   })
 
   return (
-    <Context.Provider value={{ user, setUser: mutate, token, setToken }}>
+    <Context.Provider value={auth}>
       <div class='max-w-4xl mx-auto'>
         <Routes>
           <Route path='/' component={Home} />

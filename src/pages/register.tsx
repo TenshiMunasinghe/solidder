@@ -1,23 +1,24 @@
-import { For, splitProps } from 'solid-js'
+import { For, splitProps, useContext } from 'solid-js'
 import { createStore } from 'solid-js/store'
+import { Context } from '../App'
 import Button from '../components/Button'
 import Form from '../components/Form'
 import FormLabel from '../components/FormLabel'
 import Input from '../components/Input'
-import { trpcClient } from '../lib/trpc'
-import useUser from '../stores/useUser'
 
 const Login = () => {
   let ref: HTMLFormElement | undefined
 
-  const { setUser } = useUser()
+  const { register } = useContext(Context)
 
-  const [fields, setFields] = createStore({
+  const createInitialStore = () => ({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
   })
+
+  const [fields, setFields] = createStore(createInitialStore())
 
   type FieldsKey = keyof typeof fields
 
@@ -35,14 +36,14 @@ const Login = () => {
 
   const onSubmit = async () => {
     if (!ref) return
-    if (Object.values(fields).some(value => !value)) return
+    if (Object.values(fields).some(value => !value)) return //return if any of the fields are empty
     if (fields.password !== fields.confirmPassword) return
 
     const [, body] = splitProps(fields, ['confirmPassword'])
 
-    trpcClient.mutation('register', body).then(data => {
-      setUser(data)
-    })
+    await register(body)
+
+    setFields(createInitialStore())
   }
 
   return (
