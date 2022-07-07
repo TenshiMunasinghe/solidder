@@ -3,7 +3,7 @@ import { createTrpcQuery, trpcClient } from '../lib/trpc'
 
 export const createAuth = () => {
   const [token, setToken] = createSignal(localStorage.getItem('token'))
-  const [user, { mutate: setUser }] = createTrpcQuery('with-token.login')
+  const [user, { mutate }] = createTrpcQuery('with-token.login')
 
   const login = async ({
     email,
@@ -17,7 +17,7 @@ export const createAuth = () => {
       password,
     })
     batch(() => {
-      setUser(newUser)
+      mutate(newUser)
       setToken(newToken)
     })
   }
@@ -32,7 +32,7 @@ export const createAuth = () => {
       input
     )
     batch(() => {
-      setUser(newUser)
+      mutate(newUser)
       setToken(newToken)
     })
   }
