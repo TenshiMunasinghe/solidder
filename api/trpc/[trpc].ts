@@ -8,7 +8,8 @@ import z from 'zod'
 const prisma = new PrismaClient()
 
 const createContext = (opts?: trpcNext.CreateNextContextOptions) => {
-  return opts
+  const jwtSecret = process.env.JWT_SECRET || ''
+  return { jwtSecret, ...opts }
 }
 
 type Context = trpc.inferAsyncReturnType<typeof createContext>
@@ -23,10 +24,7 @@ const defaultRouter = createRouter()
       email: z.string(),
       password: z.string(),
     }),
-    async resolve({ input }) {
-      const jwtSecret = process.env.JWT_SECRET
-      if (!jwtSecret) throw new Error('Internal Server Error')
-
+    async resolve({ input, ctx }) {
       const errorOptions = {
         code: 'BAD_REQUEST',
         message: 'Invalid Credentials',
@@ -46,7 +44,7 @@ const defaultRouter = createRouter()
         throw new trpc.TRPCError(errorOptions)
       }
 
-      const token = jwt.sign(user, jwtSecret, {
+      const token = jwt.sign(user, ctx.jwtSecret, {
         expiresIn: '5h',
       })
 
@@ -59,10 +57,7 @@ const defaultRouter = createRouter()
       username: z.string(),
       password: z.string(),
     }),
-    async resolve({ input }) {
-      const jwtSecret = process.env.JWT_SECRET
-      if (!jwtSecret) throw new Error('Internal Server Error')
-
+    async resolve({ input, ctx }) {
       const { password, ...user } = await prisma.user.create({
         data: {
           email: input.email,
@@ -71,7 +66,7 @@ const defaultRouter = createRouter()
         },
       })
 
-      const token = jwt.sign(user, jwtSecret, {
+      const token = jwt.sign(user, ctx.jwtSecret, {
         expiresIn: '5h',
       })
 
@@ -83,19 +78,16 @@ type DefaultRouter = typeof defaultRouter
 
 const authRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
-    const jwtSecret = process.env.JWT_SECRET
-    if (!jwtSecret) throw new Error('Internal Server Error')
+    const token = ctx?.req?.headers.authorization
 
-    const token = ctx?.req.headers.authorization
-
-    if (!token || !jwt.verify(token, jwtSecret)) {
+    if (!token || !jwt.verify(token, ctx.jwtSecret)) {
       throw new trpc.TRPCError({ code: 'UNAUTHORIZED' })
     }
     return next()
   })
   .query('login', {
     async resolve({ ctx }) {
-      const token = ctx?.req.headers.authorization as string
+      const token = ctx?.req?.headers.authorization as string
 
       const { id, name, bio, email } = jwt.verify(
         token,
@@ -117,6 +109,10 @@ type AuthRouter = typeof authRouter
 const appRouter = createRouter()
   .merge('', defaultRouter)
   .merge('with-token.', authRouter)
+  .middleware(async ({ ctx, next }) => {
+    if (!ctx.jwtSecret) throw new Error('Internal Server Error')
+    return next()
+  })
 
 // export type definition of API
 export type AppRouter = typeof appRouter
