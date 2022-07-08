@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, User } from '@prisma/client'
 import * as trpc from '@trpc/server'
 import * as trpcNext from '@trpc/server/adapters/next'
 import bcrypt from 'bcryptjs'
@@ -7,12 +7,16 @@ import z from 'zod'
 
 const prisma = new PrismaClient()
 
-const createContext = (opts?: trpcNext.CreateNextContextOptions) => {
+const createContext = (opts: trpcNext.CreateNextContextOptions) => {
   const jwtSecret = process.env.JWT_SECRET || ''
   return { jwtSecret, ...opts }
 }
 
-type Context = trpc.inferAsyncReturnType<typeof createContext>
+type UserWithoutPassword = Omit<User, 'password'>
+
+type Context = trpc.inferAsyncReturnType<typeof createContext> & {
+  user?: UserWithoutPassword
+}
 
 const createRouter = () => {
   return trpc.router<Context>()
@@ -80,27 +84,26 @@ const authRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
     const token = ctx?.req?.headers.authorization
 
-    if (!token || !jwt.verify(token, ctx.jwtSecret)) {
+    if (!token) {
       throw new trpc.TRPCError({ code: 'UNAUTHORIZED' })
     }
-    return next()
+
+    const data = jwt.verify(token, ctx.jwtSecret) as jwt.JwtPayload &
+      UserWithoutPassword
+
+    if (!data) {
+      throw new trpc.TRPCError({ code: 'UNAUTHORIZED' })
+    }
+
+    const { id, name, bio, email } = data
+
+    const user = { id, name, bio, email }
+
+    return next({ ctx: { ...ctx, user } })
   })
   .query('login', {
     async resolve({ ctx }) {
-      const token = ctx?.req?.headers.authorization as string
-
-      const { id, name, bio, email } = jwt.verify(
-        token,
-        process.env.JWT_SECRET || ''
-      ) as jwt.JwtPayload &
-        trpc.inferProcedureOutput<DefaultRouter['_def']['queries']['login']>
-
-      return {
-        id,
-        name,
-        bio,
-        email,
-      }
+      return ctx.user
     },
   })
 
