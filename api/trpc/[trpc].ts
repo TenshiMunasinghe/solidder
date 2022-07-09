@@ -110,7 +110,7 @@ const authRouter = createRouter()
 type AuthRouter = typeof authRouter
 
 const appRouter = createRouter()
-  .merge('', defaultRouter)
+  .merge(defaultRouter)
   .merge('with-token.', authRouter)
   .middleware(async ({ ctx, next }) => {
     if (!ctx.jwtSecret) throw new Error('Internal Server Error')
