@@ -13,8 +13,8 @@ model Liquid {
   id        String      @id @default(uuid())
   createdAt DateTime @default(now())
   content   String
-  authorId  Int
-  parentId  Int
+  authorId  String
+  parentId  String
 
   @@index([authorId, parentId])
   @@map("liquid")
@@ -24,7 +24,7 @@ model Solid {
   id        String      @id @default(uuid())
   createdAt DateTime @default(now())
   content   String
-  authorId  Int
+  authorId  String
   likes     Int      @default(0)
 
   @@index([authorId])
