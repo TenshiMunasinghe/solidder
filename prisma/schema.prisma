@@ -1,7 +1,24 @@
+generator zod {
+  provider                 = "zod-prisma"
+  output                   = "./zod"
+
+  relationModel            = true
+
+  modelCase                = "PascalCase"
+
+  modelSuffix              = "Model"
+  useDecimalJs             = true
+
+  imports                  = null
+
+  prismaJsonNullability    = true
+}
+
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
+
 
 datasource db {
   provider             = "mysql"
@@ -9,10 +26,12 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
+
+
 model Liquid {
-  id        String      @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  content   String
+  content   String   @db.VarChar(255) ///@zod.max(255)
   authorId  String
   parentId  String
 
@@ -21,9 +40,9 @@ model Liquid {
 }
 
 model Solid {
-  id        String      @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  content   String
+  content   String   @db.VarChar(255) ///@zod.max(255)
   authorId  String
   likes     Int      @default(0)
 
@@ -32,11 +51,11 @@ model Solid {
 }
 
 model User {
-  id    String     @id @default(uuid())
-  name  String  @unique
-  bio   String?
-  email String  @unique
-  password String
+  id       String  @id @default(uuid())
+  name     String  @unique @db.VarChar(15) ///@zod.max(15)
+  bio      String? @db.VarChar(140) ///@zod.max(140)
+  email    String  @unique @db.VarChar(254) ///@zod.email().max(254)
+  password String  @db.VarChar(255) ///@zod.max(255)
 
   @@map("user")
 }

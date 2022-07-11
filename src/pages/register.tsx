@@ -1,77 +1,59 @@
-import { For, splitProps, useContext } from 'solid-js'
-import { createStore } from 'solid-js/store'
+import { reporter } from '@felte/reporter-solid'
+import { createForm } from '@felte/solid'
+import { validator } from '@felte/validator-zod'
+import { useContext } from 'solid-js'
+import { z } from 'zod'
+import { UserModel } from '../../prisma/zod'
 import { Context } from '../App'
 import Button from '../components/Button'
 import Form from '../components/Form'
-import FormLabel from '../components/FormLabel'
-import Input from '../components/Input'
+import FormField from '../components/FormField'
 
 const Login = () => {
-  let ref: HTMLFormElement | undefined
-
   const { register } = useContext(Context)
 
-  const createInitialStore = () => ({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+  const schema = UserModel.pick({
+    email: true,
+    password: true,
+    name: true,
+  }).merge(
+    z.object({
+      confirmPassword: UserModel.shape.password,
+    })
+  )
+
+  const { form } = createForm<z.infer<typeof schema>>({
+    extend: [
+      validator({
+        schema,
+        level: 'error',
+      }),
+      reporter,
+    ],
+    validate: values => {
+      if (values.password !== values.confirmPassword) {
+        return {
+          confirmPassword: 'Passwords do not match',
+        }
+      }
+    },
+    onSubmit: async ({ confirmPassword, name, ...values }) => {
+      await register({ ...values, username: name })
+    },
   })
-
-  const [fields, setFields] = createStore(createInitialStore())
-
-  type FieldsKey = keyof typeof fields
-
-  const attributes: {
-    [key in FieldsKey]: {
-      type: string
-      label: string
-    }
-  } = {
-    username: { type: 'text', label: 'Username' },
-    email: { type: 'email', label: 'Email' },
-    password: { type: 'password', label: 'Password' },
-    confirmPassword: { type: 'password', label: 'Confirm Password' },
-  }
-
-  const onSubmit = async () => {
-    if (!ref) return
-    if (Object.values(fields).some(value => !value)) return //return if any of the fields are empty
-    if (fields.password !== fields.confirmPassword) return
-
-    const [, body] = splitProps(fields, ['confirmPassword'])
-
-    await register(body)
-
-    setFields(createInitialStore())
-  }
 
   return (
     <div class='space-y-8 py-12'>
       <h1>Register</h1>
-      <Form
-        onSubmit={e => {
-          e.preventDefault()
-          onSubmit()
-        }}
-        ref={ref}>
-        <For each={Object.keys(fields) as FieldsKey[]}>
-          {key => {
-            const { label, type } = attributes[key]
-            return (
-              <FormLabel label={label}>
-                <Input
-                  type={type}
-                  name={key}
-                  value={fields[key]}
-                  onKeyUp={e => {
-                    setFields(key, e.currentTarget.value)
-                  }}
-                />
-              </FormLabel>
-            )
-          }}
-        </For>
+      <Form form={form}>
+        <FormField label='Username' type='text' name='name' />
+        <FormField label='Email' type='email' name='email' />
+        <FormField label='Password' type='password' name='password' />
+        <FormField
+          label='Confirm Password'
+          type='password'
+          name='confirmPassword'
+        />
         <Button type='submit'>Register</Button>
       </Form>
     </div>
