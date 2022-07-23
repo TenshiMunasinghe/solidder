@@ -5,10 +5,7 @@ import Input from './Input'
 type BreakPoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'all'
 
 interface Props
-  extends Omit<
-    JSX.InputHTMLAttributes<HTMLInputElement>,
-    'children' | 'class'
-  > {
+  extends Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'children'> {
   name: string
   label?: string
   arrangement?: {
@@ -41,6 +38,7 @@ const FormField = (props: Props) => {
     'name',
     'label',
     'arrangement',
+    'class',
   ])
   const arrangement = () =>
     local.arrangement ?? {
@@ -55,7 +53,7 @@ const FormField = (props: Props) => {
           'flex ' + className[arrangement().direction][arrangement().above]
         }>
         <div>{local.label}</div>
-        <Input {...inputProps} name={local.name} />
+        <Input {...inputProps} name={local.name} class={local.class} />
       </label>
       <ValidationMessage for={local.name}>
         {errors => (

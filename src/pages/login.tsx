@@ -6,8 +6,8 @@ import { z } from 'zod'
 import { UserModel } from '../../prisma/zod'
 import { Context } from '../App'
 import Button from '../components/Button'
-import Form from '../components/Form'
-import FormField from '../components/FormField'
+import Form from '../form/Form'
+import FormField from '../form/FormField'
 
 const Login = () => {
   const { login } = useContext(Context)
