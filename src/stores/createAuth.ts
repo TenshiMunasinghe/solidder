@@ -37,5 +37,12 @@ export const createAuth = () => {
     })
   }
 
-  return { token, user, login, register }
+  const logout = () => {
+    batch(() => {
+      mutate(undefined)
+      setToken(null)
+    })
+  }
+
+  return { token, user, login, register, logout }
 }

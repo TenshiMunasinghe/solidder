@@ -13,6 +13,7 @@ export const Context = createContext<{
   token: Auth['token']
   login: Auth['login'] | (() => void)
   register: Auth['register'] | (() => void)
+  logout: Auth['logout']
 }>({
   user: null,
   token: () => null,
@@ -20,6 +21,9 @@ export const Context = createContext<{
     /* initialize as empty function */
   },
   register: () => {
+    /* initialize as empty function */
+  },
+  logout: () => {
     /* initialize as empty function */
   },
 })
