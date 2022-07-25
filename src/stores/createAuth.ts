@@ -17,8 +17,9 @@ export const createAuth = () => {
       password,
     })
     batch(() => {
-      mutate(newUser)
+      // must be in this order
       setToken(newToken)
+      mutate(newUser)
     })
   }
 
@@ -32,15 +33,16 @@ export const createAuth = () => {
       input
     )
     batch(() => {
-      mutate(newUser)
+      // must be in this order
       setToken(newToken)
+      mutate(newUser)
     })
   }
 
   const logout = () => {
     batch(() => {
-      mutate(undefined)
       setToken(null)
+      mutate(undefined)
     })
   }
 

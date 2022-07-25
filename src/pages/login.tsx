@@ -1,7 +1,8 @@
 import { reporter } from '@felte/reporter-solid'
 import { createForm } from '@felte/solid'
 import { validator } from '@felte/validator-zod'
-import { useContext } from 'solid-js'
+import { useNavigate } from 'solid-app-router'
+import { createEffect, useContext } from 'solid-js'
 import { z } from 'zod'
 import { UserModel } from '../../prisma/zod'
 import { Context } from '../App'
@@ -10,7 +11,8 @@ import Link from '../components/Link'
 import Form from '../form/Form'
 import FormField from '../form/FormField'
 const Login = () => {
-  const { login } = useContext(Context)
+  const { login, user } = useContext(Context)
+  const navigate = useNavigate()
 
   const schema = UserModel.pick({ email: true, password: true })
 
@@ -26,6 +28,12 @@ const Login = () => {
       if (!email || !password) return
       await login({ email, password })
     },
+  })
+
+  createEffect(() => {
+    if (user?.()) {
+      navigate('/')
+    }
   })
 
   return (
