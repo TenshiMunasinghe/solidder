@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { UserModel } from '../../prisma/zod'
 import { Context } from '../App'
 import Button from '../components/Button'
+import Link from '../components/Link'
 import Form from '../form/Form'
 import FormField from '../form/FormField'
 
@@ -56,6 +57,9 @@ const Login = () => {
         />
         <Button type='submit'>Register</Button>
       </Form>
+      <div>
+        Got an account? Then <Link href='/login'>login</Link>
+      </div>
     </div>
   )
 }
