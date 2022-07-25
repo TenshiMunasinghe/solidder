@@ -38,7 +38,7 @@ const Login = () => {
         }
       }
     },
-    onSubmit: async ({ confirmPassword, name, ...values }) => {
+    onSubmit: async ({ confirmPassword: _, name, ...values }) => {
       await register({ ...values, username: name })
     },
   })
