@@ -6,9 +6,9 @@ import { z } from 'zod'
 import { UserModel } from '../../prisma/zod'
 import { Context } from '../App'
 import Button from '../components/Button'
+import Link from '../components/Link'
 import Form from '../form/Form'
 import FormField from '../form/FormField'
-
 const Login = () => {
   const { login } = useContext(Context)
 
@@ -36,6 +36,9 @@ const Login = () => {
         <FormField name='password' type='password' label='Password' />
         <Button type='submit'>Log In</Button>
       </Form>
+      <div>
+        No account? Then <Link href='/register'>register</Link>
+      </div>
     </div>
   )
 }
