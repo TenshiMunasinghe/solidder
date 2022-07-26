@@ -106,6 +106,17 @@ const authRouter = createRouter()
       return ctx.user
     },
   })
+  .mutation('post', {
+    input: z.object({ content: z.string() }),
+    async resolve({ input, ctx }) {
+      return prisma.solid.create({
+        data: {
+          content: input.content,
+          authorId: ctx.user.id,
+        },
+      })
+    },
+  })
 
 type AuthRouter = typeof authRouter
 

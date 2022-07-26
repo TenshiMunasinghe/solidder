@@ -4,6 +4,8 @@ import { validator } from '@felte/validator-zod'
 import { Portal, Show } from 'solid-js/web'
 import z from 'zod'
 import { SolidModel } from '../../prisma/zod'
+import Button from '../components/Button'
+import { trpcClient } from '../lib/trpc'
 import Form from './Form'
 
 interface Props {
@@ -22,7 +24,7 @@ const PostForm = (props: Props) => {
       reporter,
     ],
     onSubmit: async ({ content }) => {
-      return
+      await trpcClient.mutation('with-token.post', { content })
     },
   })
 
@@ -33,7 +35,9 @@ const PostForm = (props: Props) => {
           <Form form={form} class='max-w-lg mx-auto'>
             <textarea
               placeholder='post your solid'
-              class='bg-neutral-700 text-neutral-50'></textarea>
+              class='bg-neutral-700 text-neutral-50'
+              name='content'></textarea>
+            <Button type='submit'>Post</Button>
           </Form>
         </div>
       </Show>
